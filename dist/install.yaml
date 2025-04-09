@@ -48,6 +48,8 @@ spec:
             description: ArksApplicationSpec defines the desired state of ArksApplication.
             properties:
               driver:
+                description: Driver defines the underlying driver name. Now support
+                  LWS only.
                 type: string
               extraOptions:
                 items:
@@ -3128,8 +3130,41 @@ spec:
                   Important: Run "make" to regenerate code after modifying this file
                 type: integer
               runtime:
+                description: |-
+                  Runtime defines the inference runtime.
+                  Now support: vllm, sglang. Default vLLM.
+                  We will support Dynamo in future.
                 type: string
+              runtimeImage:
+                description: |-
+                  RuntimeImage defines the runtime container image URL.
+                  Specify this only when a specific version of the runtime image is required.
+                  Customized runtime container images must be compatible with the Runtime.
+                  Arks provides a default version of the runtime container image.
+                type: string
+              runtimeImagePullSecrets:
+                description: |-
+                  RuntimeImagePullSecrets defines the runtime image pull secret.
+                  You can specify the image pull secrets for the private image registry.
+                items:
+                  description: |-
+                    LocalObjectReference contains enough information to let you locate the
+                    referenced object inside the same namespace.
+                  properties:
+                    name:
+                      default: ""
+                      description: |-
+                        Name of the referent.
+                        This field is effectively required, but due to backwards compatibility is
+                        allowed to be empty. Instances of this type with an empty value here are
+                        almost certainly wrong.
+                        More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                      type: string
+                  type: object
+                  x-kubernetes-map-type: atomic
+                type: array
               servedModelName:
+                description: ServedModelName defines a custom model name.
                 type: string
               tensorParallelSize:
                 type: integer
@@ -3137,7 +3172,6 @@ spec:
             - instanceSpec
             - model
             - replicas
-            - servedModelName
             type: object
           status:
             description: ArksApplicationStatus defines the observed state of ArksApplication.

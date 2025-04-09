@@ -419,6 +419,7 @@ func generateLws(application *arksv1.ArksApplication, pvcName string) (*lwsapi.L
 						Affinity:           application.Spec.InstanceSpec.Affinity,
 						NodeSelector:       application.Spec.InstanceSpec.NodeSelector,
 						Tolerations:        application.Spec.InstanceSpec.Tolerations,
+						ImagePullSecrets:   application.Spec.RuntimeImagePullSecrets,
 						Containers: []corev1.Container{
 							{
 								Name:         "leader",
@@ -494,6 +495,11 @@ func generateLwsLabels(application *arksv1.ArksApplication, role string) map[str
 }
 
 func getApplicationImage(application *arksv1.ArksApplication) (string, error) {
+	// Make sure the Runtime match with the RuntimeImage.
+	if application.Spec.RuntimeImage != "" {
+		return application.Spec.RuntimeImage, nil
+	}
+
 	switch application.Spec.Runtime {
 	case string(arksv1.ArksRuntimeVLLM):
 		return "vllm/vllm-openai:v0.8.2", nil
@@ -510,7 +516,7 @@ func generateLeaderCommand(application *arksv1.ArksApplication) ([]string, error
 	case string(arksv1.ArksRuntimeVLLM):
 		args := "/bin/bash /vllm-workspace/examples/online_serving/multi-node-serving.sh leader --ray_cluster_size=$(LWS_GROUP_SIZE); python3 -m vllm.entrypoints.openai.api_server --port 8080"
 		args = fmt.Sprintf("%s --model %s", args, generateModelPath(application.Namespace, application.Spec.Model.Name))
-		args = fmt.Sprintf("%s --served-model-name %s", args, application.Spec.ServedModelName)
+		args = fmt.Sprintf("%s --served-model-name %s", args, getServedModelName(application))
 		if application.Spec.TensorParallelSize > 0 {
 			args = fmt.Sprintf("%s --tensor-parallel-size %d", args, application.Spec.TensorParallelSize)
 		}
@@ -521,7 +527,7 @@ func generateLeaderCommand(application *arksv1.ArksApplication) ([]string, error
 	case string(arksv1.ArksRuntimeSGLang):
 		args := "python3 -m sglang.launch_server --dist-init-addr $(LWS_LEADER_ADDRESS):20000 --nnodes $(LWS_GROUP_SIZE) --node-rank $(LWS_WORKER_INDEX) --trust-remote-code --host 0.0.0.0 --port 8080"
 		args = fmt.Sprintf("%s --model-path /models/%s/%s", args, application.Namespace, application.Spec.Model.Name)
-		args = fmt.Sprintf("%s --served-model-name %s", args, application.Spec.ServedModelName)
+		args = fmt.Sprintf("%s --served-model-name %s", args, getServedModelName(application))
 		if application.Spec.TensorParallelSize > 0 {
 			args = fmt.Sprintf("%s --tp %d", args, application.Spec.TensorParallelSize)
 		}
@@ -543,7 +549,7 @@ func generateWorkerCommand(application *arksv1.ArksApplication) ([]string, error
 	case string(arksv1.ArksRuntimeSGLang):
 		args := "python3 -m sglang.launch_server --dist-init-addr $(LWS_LEADER_ADDRESS):20000 --nnodes $(LWS_GROUP_SIZE) --node-rank $(LWS_WORKER_INDEX) --trust-remote-code"
 		args = fmt.Sprintf("%s --model-path /models/%s/%s", args, application.Namespace, application.Spec.Model.Name)
-		args = fmt.Sprintf("%s --served-model-name %s", args, application.Spec.ServedModelName)
+		args = fmt.Sprintf("%s --served-model-name %s", args, getServedModelName(application))
 		if application.Spec.TensorParallelSize > 0 {
 			args = fmt.Sprintf("%s --tp %d", args, application.Spec.TensorParallelSize)
 		}
@@ -555,6 +561,14 @@ func generateWorkerCommand(application *arksv1.ArksApplication) ([]string, error
 		// never reach here
 		return nil, fmt.Errorf("runtime not support")
 	}
+}
+
+func getServedModelName(application *arksv1.ArksApplication) string {
+	servedModelName := application.Spec.Model.Name
+	if application.Spec.ServedModelName != "" {
+		servedModelName = application.Spec.ServedModelName
+	}
+	return servedModelName
 }
 
 func checkApplicationCondition(application *arksv1.ArksApplication, conditionType arksv1.ArksApplicationConditionType) bool {

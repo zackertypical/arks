@@ -141,13 +141,32 @@ type ArksApplicationSpec struct {
 	// Important: Run "make" to regenerate code after modifying this file
 	Replicas int `json:"replicas"`
 
+	// Driver defines the underlying driver name. Now support LWS only.
 	// +optional
-	Driver string `json:"driver"` // LWS, kuberay, Dynamo, Default LWS.
+	Driver string `json:"driver"` // LWS
+
+	// Runtime defines the inference runtime.
+	// Now support: vllm, sglang. Default vLLM.
+	// We will support Dynamo in future.
 	// +optional
 	Runtime string `json:"runtime"` // vLLM, SGLang, Default vLLM.
 
+	// RuntimeImage defines the runtime container image URL.
+	// Specify this only when a specific version of the runtime image is required.
+	// Customized runtime container images must be compatible with the Runtime.
+	// Arks provides a default version of the runtime container image.
+	// +optional
+	RuntimeImage string `json:"runtimeImage"` // The image of vLLM, SGLang or Dynamo.
+
+	// RuntimeImagePullSecrets defines the runtime image pull secret.
+	// You can specify the image pull secrets for the private image registry.
+	// +optional
+	RuntimeImagePullSecrets []corev1.LocalObjectReference `json:"runtimeImagePullSecrets"`
+
 	Model corev1.LocalObjectReference `json:"model"`
 
+	// ServedModelName defines a custom model name.
+	// +optional
 	ServedModelName string `json:"servedModelName"`
 
 	// +optional
