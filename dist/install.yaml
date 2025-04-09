@@ -3129,12 +3129,15 @@ spec:
                 type: integer
               runtime:
                 type: string
+              servedModelName:
+                type: string
               tensorParallelSize:
                 type: integer
             required:
             - instanceSpec
             - model
             - replicas
+            - servedModelName
             type: object
           status:
             description: ArksApplicationStatus defines the observed state of ArksApplication.
