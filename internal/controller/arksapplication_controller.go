@@ -119,7 +119,7 @@ func (r *ArksApplicationReconciler) remove(ctx context.Context, application *ark
 		return ctrl.Result{Requeue: true}, nil
 	}
 
-	serviceName := fmt.Sprintf("arks-endpoint-%s", application.Name)
+	serviceName := generateApplicationServiceName(application)
 	if err := r.KubeClient.CoreV1().Services(application.Namespace).Delete(ctx, serviceName, metav1.DeleteOptions{}); err != nil {
 		if !apierrors.IsNotFound(err) {
 			klog.Errorf("application %s/%s: failed to delete application endpoint service: %q", application.Namespace, serviceName, err)
@@ -271,7 +271,7 @@ func (r *ArksApplicationReconciler) reconcile(ctx context.Context, application *
 		}
 
 		// check service
-		serviceName := fmt.Sprintf("arks-endpoint-%s", application.Name)
+		serviceName := generateApplicationServiceName(application)
 		if _, err := r.KubeClient.CoreV1().Services(application.Namespace).Get(ctx, serviceName, metav1.GetOptions{}); err != nil {
 			if apierrors.IsNotFound(err) {
 				svc := &corev1.Service{
@@ -475,6 +475,10 @@ func generateLws(application *arksv1.ArksApplication, pvcName string) (*lwsapi.L
 	}
 
 	return lws, nil
+}
+
+func generateApplicationServiceName(application *arksv1.ArksApplication) string {
+	return fmt.Sprintf("arks-application-%s", application.Name)
 }
 
 func generateLwsLabels(application *arksv1.ArksApplication, role string) map[string]string {
