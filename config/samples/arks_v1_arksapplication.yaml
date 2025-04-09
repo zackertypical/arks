@@ -1,0 +1,9 @@
+apiVersion: arks.scitix.ai/v1
+kind: ArksApplication
+metadata:
+  labels:
+    app.kubernetes.io/name: arks-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: arksapplication-sample
+spec:
+  # TODO(user): Add fields here

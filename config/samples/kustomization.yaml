@@ -1,0 +1,7 @@
+## Append samples of your project ##
+resources:
+- arks_v1_arksapplication.yaml
+- arks_v1_arkstoken.yaml
+- arks_v1_arksquota.yaml
+- arks_v1_arksmodel.yaml
+# +kubebuilder:scaffold:manifestskustomizesamples

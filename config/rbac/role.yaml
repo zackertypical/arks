@@ -1,0 +1,67 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: manager-role
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - persistentvolumeclaims
+  - pods
+  - services
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - arks.scitix.ai
+  resources:
+  - arksapplications
+  - arksmodels
+  - arksquotas
+  - arkstokens
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - arks.scitix.ai
+  resources:
+  - arksapplications/finalizers
+  - arksmodels/finalizers
+  - arksquotas/finalizers
+  - arkstokens/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - arks.scitix.ai
+  resources:
+  - arksapplications/status
+  - arksmodels/status
+  - arksquotas/status
+  - arkstokens/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - leaderworkerset.x-k8s.io
+  resources:
+  - leaderworkersets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
