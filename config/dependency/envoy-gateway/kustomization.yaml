@@ -2,6 +2,3 @@ kind: Kustomization
 
 resources:
 - https://github.com/envoyproxy/gateway/releases/download/v1.1.0/install.yaml
-
-patches:
-- path: envoy_config_patch.yaml

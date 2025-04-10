@@ -4,6 +4,22 @@ metadata:
   labels:
     app.kubernetes.io/name: arks-operator
     app.kubernetes.io/managed-by: kustomize
-  name: arksapplication-sample
+  name: app-qwen
 spec:
-  # TODO(user): Add fields here
+  replicas: 1
+  tensorParallelSize: 2
+  extraOptions:
+    - --mem-fraction-static
+    - "0.7"
+  runtime: sglang
+  # Optional, default to spec.model.name
+  # servedModelName: qwen-7b
+  model:
+    name: qwen-7b
+  instanceSpec:
+    replicas: 2
+    resources:
+      limits:
+        nvidia.com/gpu: "1"
+      requests:
+        nvidia.com/gpu: "1"

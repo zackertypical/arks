@@ -4,6 +4,16 @@ metadata:
   labels:
     app.kubernetes.io/name: arks-operator
     app.kubernetes.io/managed-by: kustomize
-  name: arksmodel-sample
+  name: qwen-7b
 spec:
-  # TODO(user): Add fields here
+  model: Qwen/Qwen2.5-7B-Instruct-1M
+  storage:
+    pvc:
+      name: qwen-7b
+      spec:
+        storageClassName: local-path
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 2Gi
