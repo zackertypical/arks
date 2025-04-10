@@ -1,9 +1,13 @@
 apiVersion: arks.scitix.ai/v1
 kind: ArksQuota
 metadata:
-  labels:
-    app.kubernetes.io/name: arks-operator
-    app.kubernetes.io/managed-by: kustomize
-  name: arksquota-sample
+  name: basic-quota
+  namespace: default
 spec:
-  # TODO(user): Add fields here
+  quotas:
+    - type: prompt   
+      value: 100000
+    - type: response
+      value: 500000
+    - type: total   
+      value: 600000

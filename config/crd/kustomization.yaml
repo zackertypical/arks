@@ -6,6 +6,7 @@ resources:
 - bases/arks.scitix.ai_arkstokens.yaml
 - bases/arks.scitix.ai_arksquotas.yaml
 - bases/arks.scitix.ai_arksmodels.yaml
+- bases/arks.scitix.ai_arksendpoints.yaml
 # +kubebuilder:scaffold:crdkustomizeresource
 
 patches:

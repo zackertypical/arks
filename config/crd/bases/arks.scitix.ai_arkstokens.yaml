@@ -41,11 +41,8 @@ spec:
             properties:
               qos:
                 items:
-                  description: |-
-                    EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-                    NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
                   properties:
-                    application:
+                    arksEndpoint:
                       description: |-
                         LocalObjectReference contains enough information to let you locate the
                         referenced object inside the same namespace.
@@ -77,15 +74,32 @@ spec:
                           type: string
                       type: object
                       x-kubernetes-map-type: atomic
-                    rpm:
-                      type: integer
-                    tpm:
-                      type: integer
+                    rateLimits:
+                      items:
+                        properties:
+                          type:
+                            description: |-
+                              EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
+                              NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
+                            enum:
+                            - rpm
+                            - rpd
+                            - tpm
+                            - tpd
+                            type: string
+                          value:
+                            format: int64
+                            minimum: 0
+                            type: integer
+                        required:
+                        - type
+                        - value
+                        type: object
+                      type: array
                   required:
-                  - application
+                  - arksEndpoint
                   - quota
-                  - rpm
-                  - tpm
+                  - rateLimits
                   type: object
                 type: array
               token:

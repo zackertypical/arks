@@ -11,13 +11,19 @@ spec:
     kind: ArksQuota
     listKind: ArksQuotaList
     plural: arksquotas
+    shortNames:
+    - aq
     singular: arksquota
   scope: Namespaced
   versions:
-  - name: v1
+  - additionalPrinterColumns:
+    - jsonPath: .metadata.creationTimestamp
+      name: AGE
+      type: date
+    name: v1
     schema:
       openAPIV3Schema:
-        description: ArksQuota is the Schema for the arksquotas API.
+        description: ArksQuota is the Schema for the arksquotas API
         properties:
           apiVersion:
             description: |-
@@ -37,26 +43,57 @@ spec:
           metadata:
             type: object
           spec:
-            description: ArksQuotaSpec defines the desired state of ArksQuota.
+            description: ArksQuotaSpec defines the desired state of ArksQuota
             properties:
-              total:
-                description: |-
-                  INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-                  Important: Run "make" to regenerate code after modifying this file
-                type: integer
+              quotas:
+                description: Quotas is a list of quota configurations
+                items:
+                  description: QuotaItem defines a single quota configuration
+                  properties:
+                    type:
+                      enum:
+                      - prompt
+                      - response
+                      - total
+                      type: string
+                    value:
+                      description: Value of the quota
+                      format: int64
+                      minimum: 0
+                      type: integer
+                  required:
+                  - type
+                  - value
+                  type: object
+                minItems: 1
+                type: array
             required:
-            - total
+            - quotas
             type: object
           status:
-            description: ArksQuotaStatus defines the observed state of ArksQuota.
+            description: ArksQuotaStatus defines the observed state of ArksQuota
             properties:
-              used:
-                description: |-
-                  INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-                  Important: Run "make" to regenerate code after modifying this file
-                type: integer
-            required:
-            - used
+              quotaStatus:
+                description: List of quota usage status
+                items:
+                  description: QuotaStatus represents the current usage of a quota
+                  properties:
+                    lastUpdateTime:
+                      description: Last update time of the status
+                      format: date-time
+                      type: string
+                    type:
+                      description: Name of the quota type
+                      type: string
+                    used:
+                      description: Current usage value
+                      format: int64
+                      type: integer
+                  required:
+                  - type
+                  - used
+                  type: object
+                type: array
             type: object
         type: object
     served: true

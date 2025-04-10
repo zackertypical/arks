@@ -1,0 +1,7 @@
+resources:
+- gateway-plugin.yaml
+- redis.yaml
+- rbac.yaml
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization

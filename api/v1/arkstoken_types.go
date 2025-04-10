@@ -23,11 +23,30 @@ import (
 
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
+type RateLimitType string
+
+const (
+	RateLimitTypeRPM RateLimitType = "rpm"
+	RateLimitTypeRPD RateLimitType = "rpd"
+	RateLimitTypeTPM RateLimitType = "tpm"
+	RateLimitTypeTPD RateLimitType = "tpd"
+	// TODO: support more types
+)
+
+type RateLimit struct {
+	// +kubebuilder:validation:Required
+	// +kubebuilder:validation:Enum=rpm;rpd;tpm;tpd
+	Type RateLimitType `json:"type"`
+
+	// +kubebuilder:validation:Required
+	// +kubebuilder:validation:Minimum=0
+	Value int64 `json:"value"`
+}
+
 type ArksQos struct {
-	Application corev1.LocalObjectReference `json:"application"`
-	RPM         int                         `json:"rpm"`
-	TPM         int                         `json:"tpm"`
-	Quota       corev1.LocalObjectReference `json:"quota"`
+	ArksEndpoint corev1.LocalObjectReference `json:"arksEndpoint"`
+	RateLimits   []RateLimit                 `json:"rateLimits"`
+	Quota        corev1.LocalObjectReference `json:"quota"`
 }
 
 // ArksTokenSpec defines the desired state of ArksToken.

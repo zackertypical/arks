@@ -1,0 +1,25 @@
+apiVersion: arks.scitix.ai/v1
+kind: ArksEndpoint
+metadata:
+  labels:
+    app.kubernetes.io/name: arks-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: arksendpoint-sample
+spec:
+  defaultWeight: 5  
+  gatewayRef:
+    name: arks-eg 
+    namespace: arks-operator-system  
+    # group: gateway.networking.k8s.io  
+    # kind: Gateway  
+  matchConfigs:
+    - path:
+        type: PathPrefix 
+        value: /v1/completions
+    - path:
+        type: PathPrefix 
+        value: /v1/chat/completions
+  routeConfigs:
+    - name: backend-service  
+      weight: 10  
+      port: 8080  

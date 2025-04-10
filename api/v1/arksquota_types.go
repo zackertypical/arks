@@ -23,24 +23,61 @@ import (
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
-// ArksQuotaSpec defines the desired state of ArksQuota.
-type ArksQuotaSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
-	Total int `json:"total"`
+type QuotaType string
+
+const (
+	QuotaTypePrompt   QuotaType = "prompt"
+	QuotaTypeResponse QuotaType = "response"
+	QuotaTypeTotal    QuotaType = "total"
+	// TODO: support more types
+)
+
+// QuotaItem defines a single quota configuration
+type QuotaItem struct {
+	// +kubebuilder:validation:Required
+	// +kubebuilder:validation:Enum=prompt;response;total
+	Type string `json:"type"`
+
+	// Value of the quota
+	// +kubebuilder:validation:Required
+	// +kubebuilder:validation:Minimum=0
+	Value int64 `json:"value"`
 }
 
-// ArksQuotaStatus defines the observed state of ArksQuota.
+// ArksQuotaSpec defines the desired state of ArksQuota
+type ArksQuotaSpec struct {
+	// Quotas is a list of quota configurations
+	// +kubebuilder:validation:Required
+	// +kubebuilder:validation:MinItems=1
+	Quotas []QuotaItem `json:"quotas"`
+}
+
+// QuotaStatus represents the current usage of a quota
+type QuotaStatus struct {
+	// Name of the quota type
+	Type string `json:"type"`
+
+	// Current usage value
+	Used int64 `json:"used"`
+
+	// Last update time of the status
+	// +optional
+	LastUpdateTime *metav1.Time `json:"lastUpdateTime,omitempty"`
+}
+
+// ArksQuotaStatus defines the observed state of ArksQuota
 type ArksQuotaStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
-	Used int `json:"used"`
+	// List of quota usage status
+	// +optional
+	QuotaStatus []QuotaStatus `json:"quotaStatus,omitempty"`
 }
 
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
+// +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
+// +kubebuilder:resource:shortName=aq
 
-// ArksQuota is the Schema for the arksquotas API.
+// ArksQuota is the Schema for the arksquotas API
 type ArksQuota struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
@@ -51,7 +88,7 @@ type ArksQuota struct {
 
 // +kubebuilder:object:root=true
 
-// ArksQuotaList contains a list of ArksQuota.
+// ArksQuotaList contains a list of ArksQuota
 type ArksQuotaList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`

@@ -22,6 +22,7 @@ rules:
   - arks.scitix.ai
   resources:
   - arksapplications
+  - arksendpoints
   - arksmodels
   - arksquotas
   - arkstokens
@@ -37,6 +38,7 @@ rules:
   - arks.scitix.ai
   resources:
   - arksapplications/finalizers
+  - arksendpoints/finalizers
   - arksmodels/finalizers
   - arksquotas/finalizers
   - arkstokens/finalizers
@@ -46,6 +48,7 @@ rules:
   - arks.scitix.ai
   resources:
   - arksapplications/status
+  - arksendpoints/status
   - arksmodels/status
   - arksquotas/status
   - arkstokens/status
