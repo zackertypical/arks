@@ -19,7 +19,8 @@ spec:
     - path:
         type: PathPrefix 
         value: /v1/chat/completions
-  routeConfigs:
-    - name: backend-service  
-      weight: 10  
-      port: 8080  
+  # specifies your own service or leave empty
+  # routeConfigs: 
+  #   - name: backend-service  
+  #     weight: 10  
+  #     port: 8080  
