@@ -33,7 +33,7 @@ import (
 func (s *Server) HandleRequestHeaders(ctx context.Context, requestID string, req *extProcPb.ProcessingRequest) (resp *extProcPb.ProcessingResponse, token string) {
 	klog.InfoS("-- In RequestHeaders processing ...", "requestID", requestID)
 
-	// 从Authorization里面获取API Key
+	// Get API Key from Authorization header
 	h := req.Request.(*extProcPb.ProcessingRequest_RequestHeaders)
 	for _, n := range h.RequestHeaders.Headers.Headers {
 		if strings.ToLower(n.Key) == "authorization" {
@@ -57,7 +57,7 @@ func (s *Server) HandleRequestHeaders(ctx context.Context, requestID string, req
 
 	// TODO: add username, namespace to header
 
-	// 用于标识请求已经经过了请求头处理阶段
+	// Mark that request has passed header processing stage
 	resp = &extProcPb.ProcessingResponse{
 		Response: &extProcPb.ProcessingResponse_RequestHeaders{
 			RequestHeaders: &extProcPb.HeadersResponse{
@@ -86,7 +86,7 @@ func (s *Server) HandleRequestBody(ctx context.Context, requestID string, req *e
 	// parse request body
 	var reqBody struct {
 		Model         string `json:"model"`
-		Stream        *bool  `json:"stream,omitempty"` // 使用指针可以区分未设置和false
+		Stream        *bool  `json:"stream,omitempty"`
 		StreamOptions *struct {
 			IncludeUsage *bool `json:"include_usage,omitempty"`
 		} `json:"stream_options,omitempty"`
@@ -158,7 +158,7 @@ func (s *Server) HandleRequestBody(ctx context.Context, requestID string, req *e
 	}
 
 	// check stream_options include_usage set to true
-	// TODO: 设置了stream_options, response里面会有usage, 这里要改成修改body？
+	// TODO: When stream_options is set, response will include usage information. Should we modify the request body here?
 	if stream {
 		if reqBody.StreamOptions == nil || reqBody.StreamOptions.IncludeUsage == nil || !*reqBody.StreamOptions.IncludeUsage {
 			klog.ErrorS(nil, "stream_options include_usage not set to true", "requestID", requestID, "model", model)
@@ -231,11 +231,9 @@ func (s *Server) HandleRequestBody(ctx context.Context, requestID string, req *e
 
 	klog.InfoS("request start", "requestID", requestID, "model", model, "qos", qos)
 
-	// 添加请求计数
 	// TODO: trace term
 	// term = s.cache.AddRequestCount(requestID, model)
 
-	// 修改header
 	resp = &extProcPb.ProcessingResponse{
 		Response: &extProcPb.ProcessingResponse_RequestBody{
 			RequestBody: &extProcPb.BodyResponse{

@@ -54,7 +54,7 @@ func (r *ArksEndpointReconciler) ArksAppIndexFunc(obj client.Object) []string {
 	}
 
 	if app.Spec.ServedModelName == "" {
-		return nil
+		return []string{app.Spec.Model.Name}
 	}
 
 	return []string{app.Spec.ServedModelName}
@@ -143,6 +143,8 @@ func (r *ArksEndpointReconciler) enqueueFromApp(ctx context.Context, obj client.
 // +kubebuilder:rbac:groups=arks.scitix.ai,resources=arksendpoints,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=arks.scitix.ai,resources=arksendpoints/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=arks.scitix.ai,resources=arksendpoints/finalizers,verbs=update
+// +kubebuilder:rbac:groups=gateway.networking.k8s.io,resources=httproutes,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups="",resources=services,verbs=get;list;watch;create;update;patch;delete
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
@@ -331,6 +333,9 @@ func getArksEndpointNameFromApplication(obj client.Object) string {
 	app, ok := obj.(*arksv1.ArksApplication)
 	if !ok {
 		return ""
+	}
+	if app.Spec.ServedModelName == "" {
+		return app.Spec.Model.Name
 	}
 
 	return app.Spec.ServedModelName

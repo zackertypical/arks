@@ -4,7 +4,7 @@ metadata:
   labels:
     app.kubernetes.io/name: arks-operator
     app.kubernetes.io/managed-by: kustomize
-  name: arksendpoint-sample
+  name: qwen-7b # match ArksApplication.spec.servedModelName
 spec:
   defaultWeight: 5  
   gatewayRef:
@@ -19,7 +19,8 @@ spec:
     - path:
         type: PathPrefix 
         value: /v1/chat/completions
-  routeConfigs:
-    - name: backend-service  
-      weight: 10  
-      port: 8080  
+  # specifies your own service or leave empty
+  # routeConfigs: 
+  #   - name: backend-service  
+  #     weight: 10  
+  #     port: 8080  

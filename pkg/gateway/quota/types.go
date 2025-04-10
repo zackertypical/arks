@@ -20,8 +20,6 @@ import (
 	"context"
 	"encoding/json"
 )
-
-// QuotaService 定义配额服务接口
 type QuotaService interface {
 	IncrUsage(ctx context.Context, requests []*QuotaRequest) error
 	SetUsage(ctx context.Context, requests []*QuotaRequest) error

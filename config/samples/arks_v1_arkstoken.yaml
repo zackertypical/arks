@@ -7,7 +7,7 @@ spec:
   token: "sk-test123456"
   qos:
     - arksEndpoint:
-        name: arksendpoint-sample
+        name: qwen-7b
       rateLimits:
         - type: rpm     
           value: 60
