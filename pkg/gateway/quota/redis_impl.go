@@ -52,7 +52,7 @@ func (s *RedisQuotaService) SetUsage(ctx context.Context, requests []*QuotaReque
 
 	for _, req := range requests {
 		key := s.keyGen.Generate(req)
-		pipe.Set(ctx, key, req.Request, 0) // 不设置过期时间
+		pipe.Set(ctx, key, req.Request, 0) 
 	}
 
 	_, err := pipe.Exec(ctx)
@@ -71,7 +71,6 @@ func (s *RedisQuotaService) GetUsage(ctx context.Context, requests []*QuotaReque
 	}
 	items := make([]*getItem, len(requests))
 
-	// 1. 构建 pipeline 获取当前值
 	for i, req := range requests {
 		key := s.keyGen.Generate(req)
 		items[i] = &getItem{
@@ -81,13 +80,11 @@ func (s *RedisQuotaService) GetUsage(ctx context.Context, requests []*QuotaReque
 		}
 	}
 
-	// 2. 执行 pipeline
 	_, err := pipe.Exec(ctx)
 	if err != nil && err != redis.Nil {
 		return nil, err
 	}
 
-	// 3. 处理结果
 	for i, item := range items {
 		var currentValue int64
 		if val, err := item.getCmd.Result(); err == redis.Nil {
