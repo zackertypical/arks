@@ -54,7 +54,7 @@ func (r *ArksEndpointReconciler) ArksAppIndexFunc(obj client.Object) []string {
 	}
 
 	if app.Spec.ServedModelName == "" {
-		return nil
+		return []string{app.Spec.Model.Name}
 	}
 
 	return []string{app.Spec.ServedModelName}
@@ -331,6 +331,9 @@ func getArksEndpointNameFromApplication(obj client.Object) string {
 	app, ok := obj.(*arksv1.ArksApplication)
 	if !ok {
 		return ""
+	}
+	if app.Spec.ServedModelName == "" {
+		return app.Spec.Model.Name
 	}
 
 	return app.Spec.ServedModelName
