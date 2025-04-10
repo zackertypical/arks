@@ -1,19 +1,19 @@
 apiVersion: arks.scitix.ai/v1
 kind: ArksModel
 metadata:
-  labels:
-    app.kubernetes.io/name: arks-operator
-    app.kubernetes.io/managed-by: kustomize
   name: qwen-7b
+  namespace: default
 spec:
   model: Qwen/Qwen2.5-7B-Instruct-1M
+  source:
+    huggingface: {}
   storage:
     pvc:
       name: qwen-7b
       spec:
-        storageClassName: local-path
         accessModes:
         - ReadWriteOnce
         resources:
           requests:
             storage: 2Gi
+        storageClassName: local-path

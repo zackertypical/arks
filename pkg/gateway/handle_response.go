@@ -39,7 +39,7 @@ func (s *Server) HandleResponseHeaders(ctx context.Context, requestID string, re
 
 	headers := []*configPb.HeaderValueOption{{
 		Header: &configPb.HeaderValue{
-			Key:      HeaderWentIntoReqHeaders,
+			Key:      HeaderWentIntoRespHeaders,
 			RawValue: []byte("true"),
 		},
 	}}

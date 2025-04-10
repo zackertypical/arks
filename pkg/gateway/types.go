@@ -42,9 +42,9 @@ const (
 	HeaderErrorStreamOptionsIncludeUsage = "x-error-no-stream-options-include-usage"
 
 	// Request & Target Headers
-	HeaderWentIntoReqHeaders = "x-went-into-req-headers"
-	HeaderNamespace          = "namespace"
-
+	HeaderWentIntoReqHeaders  = "x-went-into-req-headers"
+	HeaderNamespace           = "namespace"
+	HeaderWentIntoRespHeaders = "x-went-into-resp-headers"
 	// RPM & TPM Update Errors
 	// HeaderUpdateTPM        = "x-update-tpm"
 	// HeaderUpdateRPM        = "x-update-rpm"

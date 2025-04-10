@@ -234,7 +234,6 @@ func (s *Server) HandleRequestBody(ctx context.Context, requestID string, req *e
 	// TODO: trace term
 	// term = s.cache.AddRequestCount(requestID, model)
 
-	// 修改header
 	resp = &extProcPb.ProcessingResponse{
 		Response: &extProcPb.ProcessingResponse_RequestBody{
 			RequestBody: &extProcPb.BodyResponse{
