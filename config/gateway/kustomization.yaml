@@ -1,0 +1,7 @@
+namespace: arks-operator-system
+resources:
+- gateway.yaml
+- gateway-plugin
+
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization

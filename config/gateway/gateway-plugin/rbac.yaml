@@ -1,0 +1,96 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: arks-gateway-manager-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: arks-gateway-manager-role
+subjects:
+- kind: ServiceAccount
+  name: arks-gateway-plugins
+  namespace: arks-operator-system
+---
+# TODO: remove redundance rules 
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: arks-gateway-manager-role
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - persistentvolumeclaims
+  - pods
+  - services
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - arks.scitix.ai
+  resources:
+  - arksapplications
+  - arksendpoints
+  - arksmodels
+  - arksquotas
+  - arkstokens
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - arks.scitix.ai
+  resources:
+  - arksapplications/finalizers
+  - arksendpoints/finalizers
+  - arksmodels/finalizers
+  - arksquotas/finalizers
+  - arkstokens/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - arks.scitix.ai
+  resources:
+  - arksapplications/status
+  - arksendpoints/status
+  - arksmodels/status
+  - arksquotas/status
+  - arkstokens/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - leaderworkerset.x-k8s.io
+  resources:
+  - leaderworkersets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - gateway.networking.k8s.io
+  resources:
+  - gateways
+  - httproutes
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch

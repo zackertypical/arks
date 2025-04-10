@@ -22,6 +22,9 @@ resources:
 # default, aiding admins in cluster management. Those roles are
 # not used by the {{ .ProjectName }} itself. You can comment the following lines
 # if you do not want those helpers be installed with your Project.
+- arksendpoint_admin_role.yaml
+- arksendpoint_editor_role.yaml
+- arksendpoint_viewer_role.yaml
 - arksmodel_admin_role.yaml
 - arksmodel_editor_role.yaml
 - arksmodel_viewer_role.yaml

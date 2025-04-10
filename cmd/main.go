@@ -44,6 +44,7 @@ import (
 
 	arksv1 "github.com/scitix/arks/api/v1"
 	"github.com/scitix/arks/internal/controller"
+	gatewayv1 "sigs.k8s.io/gateway-api/apis/v1"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -57,6 +58,8 @@ func init() {
 	utilruntime.Must(arksv1.AddToScheme(scheme))
 	// +kubebuilder:scaffold:scheme
 	utilruntime.Must(lwsapi.AddToScheme(scheme))
+
+	utilruntime.Must(gatewayv1.AddToScheme(scheme))
 }
 
 // nolint:gocyclo
@@ -89,7 +92,9 @@ func main() {
 	opts := zap.Options{
 		Development: true,
 	}
-	opts.BindFlags(flag.CommandLine)
+	// opts.BindFlags(flag.CommandLine)
+	klog.InitFlags(flag.CommandLine)
+
 	flag.Parse()
 
 	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
@@ -233,26 +238,33 @@ func main() {
 		klog.Errorf("unable to create ArksApplication controller: %q", err)
 		os.Exit(1)
 	}
-	if err = (&controller.ArksTokenReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-	}).SetupWithManager(mgr); err != nil {
-		klog.Errorf("unable to create ArksToken controller: %q", err)
-		os.Exit(1)
-	}
-	if err = (&controller.ArksQuotaReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-	}).SetupWithManager(mgr); err != nil {
-		klog.Errorf("unable to create ArksQuota controller: %q", err)
-		os.Exit(1)
-	}
+	// if err = (&controller.ArksTokenReconciler{
+	// 	Client: mgr.GetClient(),
+	// 	Scheme: mgr.GetScheme(),
+	// }).SetupWithManager(mgr); err != nil {
+	// 	klog.Errorf("unable to create ArksToken controller: %q", err)
+	// 	os.Exit(1)
+	// }
+	// if err = (&controller.ArksQuotaReconciler{
+	// 	Client: mgr.GetClient(),
+	// 	Scheme: mgr.GetScheme(),
+	// }).SetupWithManager(mgr); err != nil {
+	// 	klog.Errorf("unable to create ArksQuota controller: %q", err)
+	// 	os.Exit(1)
+	// }
 	if err = (&controller.ArksModelReconciler{
 		Client:     mgr.GetClient(),
 		KubeClient: kubeClient,
 		Scheme:     mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
 		klog.Errorf("unable to create ArksModel controller: %q", err)
+		os.Exit(1)
+	}
+	if err = (&controller.ArksEndpointReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		klog.Errorf("unable to create ArksEndpoint controller: %q", err)
 		os.Exit(1)
 	}
 	// +kubebuilder:scaffold:builder

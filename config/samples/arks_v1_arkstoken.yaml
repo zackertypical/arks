@@ -1,9 +1,22 @@
 apiVersion: arks.scitix.ai/v1
 kind: ArksToken
 metadata:
-  labels:
-    app.kubernetes.io/name: arks-operator
-    app.kubernetes.io/managed-by: kustomize
-  name: arkstoken-sample
+  name: example-token
+  namespace: default
 spec:
-  # TODO(user): Add fields here
+  token: "sk-test123456"
+  qos:
+    - arksEndpoint:
+        name: arksendpoint-sample
+      rateLimits:
+        - type: rpm     
+          value: 60
+        - type: tpm      
+          value: 40000
+        - type: rpd    
+          value: 1000
+        - type: tpd   
+          value: 1000000
+      quota:
+        name: basic-quota   
+    
