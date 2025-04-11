@@ -1,0 +1,102 @@
+apiVersion: arks.scitix.ai/v1
+kind: ArksModel
+metadata:
+  name: qwen-7b
+  namespace: default
+spec:
+  model: Qwen/Qwen2.5-7B-Instruct-1M
+  source:
+    huggingface: {}
+  storage:
+    pvc:
+      name: qwen-7b
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 2Gi
+        storageClassName: local-path
+---
+apiVersion: arks.scitix.ai/v1
+kind: ArksApplication
+metadata:
+  labels:
+    app.kubernetes.io/name: arks-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: app-qwen
+spec:
+  replicas: 1
+  tensorParallelSize: 2
+  extraOptions:
+    - --mem-fraction-static
+    - "0.7"
+  runtime: sglang
+  # Optional, default to spec.model.name
+  # servedModelName: qwen-7b
+  model:
+    name: qwen-7b
+  instanceSpec:
+    replicas: 2
+    resources:
+      limits:
+        nvidia.com/gpu: "1"
+      requests:
+        nvidia.com/gpu: "1"
+---
+apiVersion: arks.scitix.ai/v1
+kind: ArksEndpoint
+metadata:
+  labels:
+    app.kubernetes.io/name: arks-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: qwen-7b # match ArksApplication.spec.servedModelName
+spec:
+  defaultWeight: 5  
+  gatewayRef:
+    name: arks-eg 
+    namespace: arks-operator-system  
+  matchConfigs:
+    - path:
+        type: PathPrefix 
+        value: /v1/completions
+    - path:
+        type: PathPrefix 
+        value: /v1/chat/completions
+---
+apiVersion: arks.scitix.ai/v1
+kind: ArksQuota
+metadata:
+  name: basic-quota
+  namespace: default
+spec:
+  quotas:
+    - type: prompt   
+      value: 100000
+    - type: response
+      value: 500000
+    - type: total   
+      value: 600000
+---
+apiVersion: arks.scitix.ai/v1
+kind: ArksToken
+metadata:
+  name: example-token
+  namespace: default
+spec:
+  token: "sk-test123456"
+  qos:
+    - arksEndpoint:
+        name: qwen-7b
+      rateLimits:
+        - type: rpm     
+          value: 5
+        - type: tpm      
+          value: 40000
+        - type: rpd    
+          value: 100
+        - type: tpd   
+          value: 1000000
+      quota:
+        name: basic-quota   
+    
