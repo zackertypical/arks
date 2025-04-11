@@ -49,6 +49,96 @@
   - Designed for high-throughput model loading and reuse
 
 
+## Quick Start
+### Prerequisites
+- Kubernetes cluster (v1.20+)
+- kubectl configured to access your cluster
+
+### Installation
+```bash
+git clone https://github.com/scitix/arks.git
+cd arks
+
+# Install envoy gateway, lws dependencies
+kubectl create -k config/dependency
+
+# Install arks components
+kubectl create -k config/default
+
+# Install gateway plugins
+kubectl create -k config/gateway
+```
+
+### Examples
+
+Examples are in the config/samples directory. Install with: 
+```bash
+kubectl create -k config/samples
+```
+
+### Verification
+``` bash
+# Check all component status
+kubectl get pods -n arks-system
+
+# Check Envoy Gateway status
+kubectl get pods -n envoy-gateway-system
+
+# Check all ARKS custom resources
+kubectl get arksapplication,arksendpoint,arksmodel,arksquota,arkstoken
+```
+
+### Testing
+Currently loadbalancer support is not available, you can access the service through envoy service.
+Get the name of the Envoy service created the by the example Gateway:
+``` bash
+export ENVOY_SERVICE=$(kubectl get svc -n envoy-gateway-system --selector=gateway.envoyproxy.io/owning-gateway-namespace=default,gateway.envoyproxy.io/owning-gateway-name=eg -o jsonpath='{.items[0].metadata.name}')
+```
+
+Port forward to the Envoy service:
+``` bash
+kubectl -n envoy-gateway-system port-forward service/${ENVOY_SERVICE} 8888:80 &
+Curl the example app through Envoy proxy:
+curl http://localhost:8888/v1/chat/completions -k \
+  -H "Authorization: Bearer sk-test123456" \
+  -d '{"model": "qwen-7b", "messages": [{"role": "user", "content": "Hello, who are you?"}]}'
+```
+
+Expected response
+``` json
+{
+  "id":"xxxxxxxxx",
+  "object":"chat.completion",
+  "created": 12332454,
+  "model":"qwen-7b",
+  "choices":[{
+    "index":0,
+    "message":{
+      "role":"assistant",
+      "content":"I'm a large language model created by Alibaba Cloud. I go by the name Qwen.",
+      "reasoning_content":null,
+      "tool_calls":null
+    },
+    "logprobs":null,
+    "finish_reason":"stop",
+    "matched_stop":151645
+  }],
+  "usage":{
+    "prompt_tokens":25,
+    "total_tokens":45,
+    "completion_tokens":20,
+    "prompt_tokens_details":null
+  }
+}
+```
+### Clean-Up
+```bash
+kubectl delete -k config/samples --ignore-not-found=true
+kubectl delete -k config/gateway
+kubectl delete -k config/default
+kubectl delete -k config/dependency
+```
+
 ## License
 *Arks* is licensed under the Apache 2.0 License.
 
