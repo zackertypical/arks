@@ -92,13 +92,17 @@ kubectl get arksapplication,arksendpoint,arksmodel,arksquota,arkstoken
 Currently loadbalancer support is not available, you can access the service through envoy service.
 Get the name of the Envoy service created the by the example Gateway:
 ``` bash
-export ENVOY_SERVICE=$(kubectl get svc -n envoy-gateway-system --selector=gateway.envoyproxy.io/owning-gateway-namespace=default,gateway.envoyproxy.io/owning-gateway-name=eg -o jsonpath='{.items[0].metadata.name}')
+export ENVOY_SERVICE=$(kubectl get svc -n envoy-gateway-system --selector=gateway.envoyproxy.io/owning-gateway-name=arks-eg -o jsonpath='{.items[0].metadata.name}')
 ```
 
 Port forward to the Envoy service:
 ``` bash
 kubectl -n envoy-gateway-system port-forward service/${ENVOY_SERVICE} 8888:80 &
+```
+
 Curl the example app through Envoy proxy:
+``` bash
+
 curl http://localhost:8888/v1/chat/completions -k \
   -H "Authorization: Bearer sk-test123456" \
   -d '{"model": "qwen-7b", "messages": [{"role": "user", "content": "Hello, who are you?"}]}'
