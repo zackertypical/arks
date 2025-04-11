@@ -59,6 +59,8 @@ type ArksEndpointStatus struct {
 // +kubebuilder:subresource:status
 // +kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp"
 // +kubebuilder:printcolumn:name="Default Weight",type="integer",JSONPath=".spec.defaultWeight"
+// +kubebuilder:resource:shortName=aep
+
 // ArksEndpoint is the Schema for the arksendpoints API.
 type ArksEndpoint struct {
 	metav1.TypeMeta   `json:",inline"`

@@ -11,13 +11,43 @@ spec:
     kind: ArksApplication
     listKind: ArksApplicationList
     plural: arksapplications
+    shortNames:
+    - aapp
     singular: arksapplication
   scope: Namespaced
   versions:
-  - name: v1
+  - additionalPrinterColumns:
+    - description: The current phase of the application
+      jsonPath: .status.phase
+      name: Phase
+      type: string
+    - jsonPath: .status.replicas
+      name: Replicas
+      type: string
+    - jsonPath: .status.readyReplicas
+      name: Ready
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    - description: The model being used
+      jsonPath: .spec.model.name
+      name: Model
+      priority: 1
+      type: string
+    - description: The runtime environment
+      jsonPath: .spec.runtime
+      name: Runtime
+      priority: 1
+      type: string
+    - description: The driver name
+      jsonPath: .spec.driver
+      name: Driver
+      priority: 1
+      type: string
+    name: v1
     schema:
       openAPIV3Schema:
-        description: ArksApplication is the Schema for the arksapplications API.
         properties:
           apiVersion:
             description: |-

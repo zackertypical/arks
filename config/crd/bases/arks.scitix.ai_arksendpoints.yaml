@@ -11,6 +11,8 @@ spec:
     kind: ArksEndpoint
     listKind: ArksEndpointList
     plural: arksendpoints
+    shortNames:
+    - aep
     singular: arksendpoint
   scope: Namespaced
   versions:

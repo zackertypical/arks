@@ -69,23 +69,58 @@ kubectl create -k config/default
 kubectl create -k config/gateway
 ```
 
-### Examples
-
-Examples are in the config/samples directory. Install with: 
-```bash
-kubectl create -k config/samples
-```
-
-### Verification
+verification:
 ``` bash
-# Check all component status
-kubectl get pods -n arks-system
+# Check all component status, should be ready
+kubectl get deployment -n arks-operator-system
+---
+NAME                               READY   UP-TO-DATE   AVAILABLE   AGE
+arks-gateway-plugins               1/1     1            1           22h
+arks-operator-controller-manager   1/1     1            1           22h
+arks-redis-master                  1/1     1            1           22h
 
 # Check Envoy Gateway status
-kubectl get pods -n envoy-gateway-system
+kubectl get deployment -n   envoy-gateway-system
+--- 
+NAME                                          READY   UP-TO-DATE   AVAILABLE   AGE
+envoy-arks-operator-system-arks-eg-abcedefg   1/1     1            1           22h
+envoy-gateway                                 1/1     1            1           22h
 
+```
+
+### Examples
+
+Install with: 
+```bash
+kubectl create -f examples/quickstart/quickstart.yaml
+```
+
+Check resources ready:
+
+```bash
 # Check all ARKS custom resources
-kubectl get arksapplication,arksendpoint,arksmodel,arksquota,arkstoken
+kubectl get arksapplication,arksendpoint,arksmodel,arksquota,arkstoken,httproute -owide
+---
+# REPLICAS should equals to READY, PHASE shoule be Running
+NAME                                      PHASE     REPLICAS   READY   AGE   MODEL     RUNTIME   DRIVER
+arksapplication.arks.scitix.ai/app-qwen   Running   1          1       21m   qwen-7b   sglang
+
+NAME                                  AGE   DEFAULT WEIGHT
+arksendpoint.arks.scitix.ai/qwen-7b   21m   5
+
+# PHASE should be Ready
+NAME                               AGE   MODEL                         PHASE
+arksmodel.arks.scitix.ai/qwen-7b   21m   Qwen/Qwen2.5-7B-Instruct-1M   Ready
+
+NAME                                   AGE
+arksquota.arks.scitix.ai/basic-quota   21m
+
+NAME                                     AGE
+arkstoken.arks.scitix.ai/example-token   21m
+
+NAME                                          HOSTNAMES   AGE
+httproute.gateway.networking.k8s.io/qwen-7b               21m
+
 ```
 
 ### Testing
@@ -102,7 +137,6 @@ kubectl -n envoy-gateway-system port-forward service/${ENVOY_SERVICE} 8888:80 &
 
 Curl the example app through Envoy proxy:
 ``` bash
-
 curl http://localhost:8888/v1/chat/completions -k \
   -H "Authorization: Bearer sk-test123456" \
   -d '{"model": "qwen-7b", "messages": [{"role": "user", "content": "Hello, who are you?"}]}'
@@ -137,7 +171,7 @@ Expected response
 ```
 ### Clean-Up
 ```bash
-kubectl delete -k config/samples --ignore-not-found=true
+kubectl delete -f examples/quickstart/quickstart.yaml --ignore-not-found=true
 kubectl delete -k config/gateway
 kubectl delete -k config/default
 kubectl delete -k config/dependency

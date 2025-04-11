@@ -101,10 +101,14 @@ type ArksModelStatus struct {
 	Conditions []ArksModelCondition `json:"conditions,omitempty"`
 }
 
+// ArksModel is the Schema for the arksmodels API.
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
+// +kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp"
+// +kubebuilder:printcolumn:name="Model",type="string",JSONPath=".spec.model",description="The model being used"
+// +kubebuilder:printcolumn:name="Phase",type="string",JSONPath=".status.phase",description="The current phase of the model"
+// +kubebuilder:resource:shortName=am
 
-// ArksModel is the Schema for the arksmodels API.
 type ArksModel struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`

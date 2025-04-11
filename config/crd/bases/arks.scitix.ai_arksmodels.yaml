@@ -11,13 +11,26 @@ spec:
     kind: ArksModel
     listKind: ArksModelList
     plural: arksmodels
+    shortNames:
+    - am
     singular: arksmodel
   scope: Namespaced
   versions:
-  - name: v1
+  - additionalPrinterColumns:
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    - description: The model being used
+      jsonPath: .spec.model
+      name: Model
+      type: string
+    - description: The current phase of the model
+      jsonPath: .status.phase
+      name: Phase
+      type: string
+    name: v1
     schema:
       openAPIV3Schema:
-        description: ArksModel is the Schema for the arksmodels API.
         properties:
           apiVersion:
             description: |-
