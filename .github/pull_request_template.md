@@ -17,10 +17,16 @@ Resolves: #[Insert issue number(s)]
 <p>Your PR title should start with one of these prefixes to indicate the nature of the change:</p>
 <ul>
     <li><code>[Bug]</code>: Corrections to existing functionality</li>
+    <li><code>[Test]</code>: Adding or modifying tests</li>
+    <li><code>[Feat]</code>: New feature implementation</li>
     <li><code>[CI]</code>: Changes to build process or CI pipeline</li>
     <li><code>[Docs]</code>: Updates or additions to documentation</li>
     <li><code>[API]</code>: Modifications to arks's API or interface</li>
     <li><code>[CLI]</code>: Changes or additions to the Command Line Interface</li>
+    <li><code>[Style]</code>: Code style/format changes (whitespace, formatting, etc)</li>
+    <li><code>[Config]</code>: Configuration file changes</li>
+    <li><code>[Chore]</code>: Regular maintenance tasks, housekeeping, and minor updates</li>
+    <li><code>[Refactor]</code>: Code refactoring without functionality changes</li>
     <li><code>[Misc]</code>: For changes not covered above (use sparingly)</li>
 </ul>
 <p><em>Note: For changes spanning multiple categories, use multiple prefixes in order of importance.</em></p>
